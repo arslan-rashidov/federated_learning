@@ -15,7 +15,7 @@ pip install -e .
 
 # How to run federated learning examples
 ```bash
-cd federated_learning/examples/EXAMPLE_NAME/server/ (e.g. federated_learning/examples/mnist_fl/server/)
+cd federated_learning/examples/EXAMPLE_NAME/server/ (e.g. cd federated_learning/examples/mnist_fl/server/)
 python3 server.py
 ```
 
