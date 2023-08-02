@@ -3,20 +3,20 @@ from torch.optim import SGD
 from torch.utils.data import DataLoader
 
 from federated_learning.core.client import Client
-from federated_learning.core.utils.typing import GetWeightsInstructions, GetWeightsResult, TrainInstructions, TrainResult, \
+from federated_learning.core.utils.typing import GetWeightsInstructions, GetWeightsResult, TrainInstructions, \
+    TrainResult, \
     EvaluateInstructions, EvaluateResult, Code, Status
 from federated_learning.core.utils.weights_transformation import ndarrays_to_weights, weights_to_ndarrays
 from federated_learning.examples.mnist_fl.client.dataset import MNISTDataset, train_test_dataset_split
-from federated_learning.examples.mnist_fl.client.net import load_model
+from federated_learning.examples.mnist_fl.client.net import load_model, SimpleModel
 
 INPUT_SHAPE = 784
 CLASSES_NUM = 10
 
 
 class MNISTClient(Client):
-    def __init__(self, id: str, model, train_set, test_set):
-        super().__init__(id)
-        self.model = model
+    def __init__(self, id: str, model: SimpleModel, global_weights_save_folder_path: str, local_weights_save_folder_path: str, train_set, test_set):
+        super().__init__(id, model, global_weights_save_folder_path, local_weights_save_folder_path)
         self.train_set = train_set
         self.test_set = test_set
 
@@ -95,12 +95,12 @@ class MNISTClient(Client):
                               metrics=metrics)
 
 
-def create_client(id, dataset_path) -> MNISTClient:
+def create_client(id, dataset_path, global_weights_save_folder_path: str, local_weights_save_folder_path: str) -> MNISTClient:
     dataset = MNISTDataset(dataset_path=dataset_path)
     train_set, test_set = train_test_dataset_split(dataset, test_size=0.1)
 
     model = load_model(input_shape=INPUT_SHAPE, classes=CLASSES_NUM)
 
-    client = MNISTClient(id=id, model=model, train_set=train_set, test_set=test_set)
+    client = MNISTClient(id=id, model=model, global_weights_save_folder_path=global_weights_save_folder_path, local_weights_save_folder_path=local_weights_save_folder_path, train_set=train_set, test_set=test_set)
 
     return client
