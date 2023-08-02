@@ -3,13 +3,14 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Tuple, List
 
 from federated_learning.core.client import Client, ClientManager
-from federated_learning.core.utils.typing import Weights, GetWeightsInstructions, GetWeightsResult, EvaluateInstructions, EvaluateResult, \
+from federated_learning.core.utils.typing import Weights, GetWeightsInstructions, GetWeightsResult, \
+    EvaluateInstructions, EvaluateResult, \
     Metrics, TrainInstructions, TrainResult
 from federated_learning.strategy.weights_aggregation_strategy import WeightsAggregationStrategy
 
 
 def evaluate_client(client: Client, eval_ins: EvaluateInstructions) -> Tuple[Client, EvaluateResult]:
-    eval_result: EvaluateResult = client.evaluate(eval_ins=eval_ins)
+    eval_result: EvaluateResult = client.evaluate_execute(eval_ins=eval_ins)
     return client, eval_result
 
 
@@ -28,7 +29,7 @@ def evaluate_clients(clients_instructions: List[Tuple[Client, EvaluateInstructio
 
 
 def train_client(client: Client, train_ins: TrainInstructions) -> Tuple[Client, TrainResult]:
-    train_result: TrainResult = client.train(train_ins=train_ins)
+    train_result: TrainResult = client.train_execute(train_ins=train_ins)
     return client, train_result
 
 
@@ -44,8 +45,6 @@ def train_clients(clients_instructions: List[Tuple[Client, TrainInstructions]], 
         train_results.append(completed_future.result())
 
     return train_results
-
-
 class Server:
     def __init__(self, client_manager: ClientManager, strategy: WeightsAggregationStrategy):
         self.client_manager: ClientManager = client_manager
@@ -58,7 +57,7 @@ class Server:
     def get_initial_weights(self):
         client: Client = self.client_manager.get_num_clients(1)[0]
         get_weights_ins: GetWeightsInstructions = GetWeightsInstructions(config={})
-        get_weights_result: GetWeightsResult = client.get_weights(get_weights_ins=get_weights_ins)
+        get_weights_result: GetWeightsResult = client.get_weights_execute(get_weights_ins=get_weights_ins)
         initial_weights: Weights = get_weights_result.weights
         return initial_weights
 
@@ -89,7 +88,7 @@ class Server:
                 for metric in metrics:
                     self.client_manager.log_client_metric(client_id, metric, metrics[metric])
 
-        return self.weights
+        return evaluate_results
 
     def train_round(self, server_round: int) -> Tuple[Weights, Metrics, List[Tuple[Client, TrainResult]]]:
         clients_train_instructions: List[Tuple[Client, TrainInstructions]] = self.strategy.configure_train(

@@ -27,6 +27,7 @@ class FedAvgStrategy(WeightsAggregationStrategy):
         config = {}
         if self.on_fit_config_fn:
             config = self.on_fit_config_fn(server_round)
+        config['server_round'] = server_round
 
         train_instructions = TrainInstructions(weights, config)
 
@@ -61,9 +62,10 @@ class FedAvgStrategy(WeightsAggregationStrategy):
 
     def configure_evaluate(self, server_round: int, weights: Weights, client_manager: ClientManager) -> List[Tuple[Client, EvaluateInstructions]]:
         config = {}
-        config = {}
         if self.on_evaluate_config_fn:
             config = self.on_evaluate_config_fn(server_round)
+        config['server_round'] = server_round
+
         evaluate_ins = EvaluateInstructions(weights, config)
 
         clients = client_manager.get_num_clients(num_clients=len(client_manager))
