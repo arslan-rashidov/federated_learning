@@ -28,6 +28,7 @@ def on_evaluate_config_fn(server_round) -> Config:
 def main():
     client_manager = ClientManager()
     weights_path = "weights"
+    os.mkdir(weights_path)
     for client_i in range(1, 11):
         client_folder_path = weights_path + f"/client_{client_i}"
         os.mkdir(client_folder_path)
