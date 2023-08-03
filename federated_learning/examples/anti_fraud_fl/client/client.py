@@ -38,8 +38,8 @@ class AntiFraudClient(Client):
 
         for i, data in enumerate(train_dataloader):
             transactions, labels = data['transaction'], data['label']
-            transactions.to(self.device)
-            labels.to(self.device)
+            transactions = transactions.to(self.device)
+            labels = labels.to(self.device)
             transactions = transactions.reshape(transactions.shape[0], 1, transactions.shape[1])
 
             optimizer.zero_grad()
@@ -74,8 +74,8 @@ class AntiFraudClient(Client):
 
         for i, data in enumerate(test_dataloader):
             transactions, label = data['transaction'], data['label']
-            transactions.to(self.device)
-            label.to(self.device)
+            transactions = transactions.to(self.device)
+            label = label.to(self.device)
             transactions = transactions.reshape(transactions.shape[0], 1, transactions.shape[1])
             output = self.model(transactions)
 
@@ -83,8 +83,8 @@ class AntiFraudClient(Client):
 
             test_loss += loss.item()
 
-            outputs = np.hstack([outputs, output.detach().numpy().reshape(-1)])
-            labels = np.hstack([labels, label.reshape(-1)])
+            outputs = np.hstack([outputs, output.cpu().detach().numpy().reshape(-1)])
+            labels = np.hstack([labels, label.cpu().reshape(-1)])
 
         test_loss /= len(test_dataloader)
         test_roc_auc_score = roc_auc_score(labels, outputs)
