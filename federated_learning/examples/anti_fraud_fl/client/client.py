@@ -38,6 +38,8 @@ class AntiFraudClient(Client):
 
         for i, data in enumerate(train_dataloader):
             transactions, labels = data['transaction'], data['label']
+            transactions.to(self.device)
+            labels.to(self.device)
             transactions = transactions.reshape(transactions.shape[0], 1, transactions.shape[1])
 
             optimizer.zero_grad()
@@ -72,6 +74,8 @@ class AntiFraudClient(Client):
 
         for i, data in enumerate(test_dataloader):
             transactions, label = data['transaction'], data['label']
+            transactions.to(self.device)
+            label.to(self.device)
             transactions = transactions.reshape(transactions.shape[0], 1, transactions.shape[1])
             output = self.model(transactions)
 
