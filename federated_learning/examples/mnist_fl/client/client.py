@@ -46,6 +46,9 @@ class MNISTClient(Client):
                 images = data['image']
                 labels = data['label'].reshape(-1)
 
+                images = images.to(self.device)
+                labels = labels.to(self.device)
+
                 optimizer.zero_grad()
 
                 output = self.model(images)
@@ -78,6 +81,9 @@ class MNISTClient(Client):
         for batch_id, data in enumerate(dataloader):
             images = data['image']
             labels = data['label'].reshape(-1)
+
+            images = images.to(self.device)
+            labels = labels.to(self.device)
 
             output = self.model(images)
 
