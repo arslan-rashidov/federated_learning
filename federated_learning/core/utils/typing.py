@@ -42,6 +42,14 @@ class GetWeightsResult:
     status: Status
     weights: Weights
 
+@dataclass
+class SetWeightsInstructions:
+    weights: Weights
+
+@dataclass
+class SetWeightsResult:
+    status: Status
+
 
 @dataclass
 class TrainInstructions:
@@ -68,3 +76,9 @@ class EvaluateResult:
     status: Status
     num_examples: int
     metrics: Metrics
+
+@dataclass
+class ClientInitConfig:
+    id: str
+    config: Config
+    init_weights: Union[Weights, None] = None

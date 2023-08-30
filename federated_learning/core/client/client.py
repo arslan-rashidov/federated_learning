@@ -6,8 +6,9 @@ import torch
 from torch import nn
 
 from federated_learning.core.utils import weights_to_ndarrays
-from federated_learning.core.utils.typing import TrainInstructions, TrainResult, EvaluateInstructions, EvaluateResult, GetWeightsInstructions, \
-    GetWeightsResult, Weights
+from federated_learning.core.utils.typing import TrainInstructions, TrainResult, EvaluateInstructions, EvaluateResult, \
+    GetWeightsInstructions, \
+    GetWeightsResult, Weights, SetWeightsInstructions, SetWeightsResult
 
 
 class Client(ABC):
@@ -54,6 +55,10 @@ class Client(ABC):
 
     @abstractmethod
     def get_weights(self, get_weights_ins: GetWeightsInstructions) -> GetWeightsResult:
+        pass
+
+    @abstractmethod
+    def set_weights(self, set_weights_ins: SetWeightsInstructions) -> SetWeightsResult:
         pass
 
     @abstractmethod
